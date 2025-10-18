@@ -1,50 +1,43 @@
 name: build-and-lint
 
-#triggers:define when this workflow should run
-# trigger on push to these branches
+# Triggers: Define when this workflow should run
 on:
   push:
-    branches: [main,dev]
-  pull:
-    branches: [master,dev]
-
+    branches: [main, dev]
+  pull_request: # Fixed: Changed 'pull' to 'pull_request'
+    branches: [main, dev] # Standardized to 'main' (update if 'master' is needed)
 
 jobs:
   build-and-lint:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkput repo
-        uses: actions/checkout@v3
+      - name: Checkout repo # Fixed: Corrected typo 'Checkput' to 'Checkout'
+        uses: actions/checkout@v4 # Updated to v4
 
       - name: Setup Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4 # Updated to v4
         with:
-          node-version:20
+          node-version: '20' # Fixed: Quoted the version number
 
       - name: Install backend dependencies
         working-directory: server
-        run : npm ci 
+        run: npm ci
 
-      - name: Lint backend dependencies
+      - name: Lint backend
         working-directory: server
-        run : npm run lint -- --max-warnings=0 
+        run: npm run lint -- --max-warnings=0
 
       - name: Install frontend dependencies
         working-directory: client
-        run : npm ci 
+        run: npm ci
 
-      - name: Lint frontend 
+      - name: Lint frontend
         working-directory: client
-        run : npm run lint -- --max-warnings=0 
-
-      - name: Install backend dependencies
-        working-directory: server
-        run : npm ci 
+        run: npm run lint -- --max-warnings=0
 
       - name: Build backend image
-        run : docker build -t backend ./server
+        run: docker build -t backend ./server
 
       - name: Build frontend image
-        run : docker build -t frontend ./client
-
+        run: docker build -t frontend ./client
